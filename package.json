@@ -45,11 +45,14 @@
     "onLanguage:angular"
   ],
   "main": "./src/extension",
+  "scripts": {
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
   "devDependencies": {
-    "@types/vscode": "^1.62.0"
+    "vscode": "^1.1.36"
   },
   "dependencies": {
-    "@ksmithut/prettier-standard": "^0.0.8",
-    "typescript": "4.5.2"
+    "prettier-standard": "16.3.0",
+    "typescript": "3.9.3"
   }
 }
