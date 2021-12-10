@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.9.2]
+- I am bad at publishing versions. Many apologies. Trying again
+
 ## [0.9.1]
 - Revert 0.9.0. Worked great in debug mode but got a weird error when running packaged. IT WILL BE BACK!
 
