@@ -2,7 +2,7 @@
   "name": "prettier-standard-vscode",
   "displayName": "Prettier-Standard - JavaScript formatter",
   "description": "VS Code plugin for prettier + standard",
-  "version": "0.8.1",
+  "version": "0.9.1",
   "publisher": "numso",
   "author": "Dallin Osmun <@dallinosmun>",
   "galleryBanner": {

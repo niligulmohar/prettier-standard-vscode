@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.1]
+- Revert 0.9.0. Worked great in debug mode but got a weird error when running packaged. IT WILL BE BACK!
+
+## [0.9.0]
+- Update to a forked version of prettier-standard with updated dependencies
+
 ## [0.8.1]
 
 - Fix issue where .tsx files wouldn't format immediately after opening the editor
