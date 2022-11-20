@@ -2,11 +2,16 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { languages, window, workspace, Range, TextEdit } = require('vscode')
 
+const pkgJson = require('../package.json')
+
 const output = window.createOutputChannel('Prettier Standard')
 
 // -------------------------------------------------------------------------- //
 
 exports.activate = async function (context) {
+  output.appendLine(`Extension Name: ${pkgJson.displayName}`)
+  output.appendLine(`Extension ID: ${pkgJson.publisher}.${pkgJson.name}`)
+  output.appendLine(`Extension Version: ${pkgJson.version}`)
   const ctx = {}
   ctx.prettier = await loadModule('prettier', require('prettier'), ctx => {
     if (typeof ctx.pkg.format !== 'function') {
@@ -47,7 +52,13 @@ async function format ({ prettier, linter }, document, range) {
   try {
     const filePath = getFilePath(document)
     const ignorePath = await findUp(filePath, '.prettierignore')
-    if (prettier.getFileInfo.sync(filePath, { ignorePath }).ignored) return
+    if (prettier.getFileInfo.sync(filePath, { ignorePath }).ignored) {
+      const name = document.isUntitled ? 'untitled file' : document.fileName
+      output.appendLine('Not formatting a file excluded by .prettierignore')
+      output.appendLine(`file: ${name}`)
+      output.appendLine(`.prettierignore: ${ignorePath}`)
+      return
+    }
     let text = range ? document.getText(range) : document.getText()
     const prettierConfig = getPrettierConfig(prettier, filePath, document)
     text = prettier.format(text, prettierConfig)
@@ -56,6 +67,8 @@ async function format ({ prettier, linter }, document, range) {
     }
     return [TextEdit.replace(range || fullDocumentRange(document), text)]
   } catch (error) {
+    const name = document.isUntitled ? 'untitled file' : document.fileName
+    output.appendLine(`Error while formatting: ${name}`)
     output.appendLine(error)
     window.showErrorMessage(error.message)
     return []
