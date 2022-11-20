@@ -70,7 +70,9 @@ async function format ({ prettier, linter }, document, range) {
     const name = document.isUntitled ? 'untitled file' : document.fileName
     output.appendLine(`Error while formatting: ${name}`)
     output.appendLine(error)
-    window.showErrorMessage(error.message)
+    window.showErrorMessage('Error formatting file', 'See details').then(a => {
+      if (a === 'See details') output.show()
+    })
     return []
   }
 }
