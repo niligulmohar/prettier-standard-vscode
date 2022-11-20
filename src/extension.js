@@ -1,3 +1,5 @@
+const fs = require('node:fs')
+const path = require('node:path')
 const { languages, window, workspace, Range, TextEdit } = require('vscode')
 
 const output = window.createOutputChannel('Prettier Standard')
@@ -11,7 +13,7 @@ exports.activate = async function (context) {
       return 'missing prettier.format(text, config)'
     }
     if (typeof ctx.pkg.resolveConfig !== 'function') {
-      return 'missing prettier.resolveConfig(path, opts)'
+      return 'missing prettier.resolveConfig(filePath, opts)'
     }
   })
   const eslint = await loadModule('eslint', require('eslint'), ctx => {
@@ -41,11 +43,17 @@ exports.deactivate = function () {}
 
 // -- Formatter ------------------------------------------------------------- //
 
-async function format (ctx, document, range) {
+async function format ({ prettier, linter }, document, range) {
   try {
+    const filePath = getFilePath(document)
+    const ignorePath = await findUp(filePath, '.prettierignore')
+    if (prettier.getFileInfo.sync(filePath, { ignorePath }).ignored) return
     let text = range ? document.getText(range) : document.getText()
-    text = prettierFormat(text, document, ctx)
-    text = eslintFormat(text, document, ctx)
+    const prettierConfig = getPrettierConfig(prettier, filePath, document)
+    text = prettier.format(text, prettierConfig)
+    if (eslintLanguages.includes(document.languageId)) {
+      text = linter.verifyAndFix(text, eslintConfig).output
+    }
     return [TextEdit.replace(range || fullDocumentRange(document), text)]
   } catch (error) {
     output.appendLine(error)
@@ -92,20 +100,14 @@ const defaultPrettierConfig = {
   trailingComma: 'none'
 }
 
-function getPrettierConfig (document, prettier) {
+function getPrettierConfig (prettier, filePath, { languageId }) {
   const opts = { editorconfig: true, useCache: false }
-  const path = getFilePath(document)
   let config = {}
-  if (path) config = prettier.resolveConfig.sync(path, opts) || {}
+  if (filePath) config = prettier.resolveConfig.sync(filePath, opts) || {}
   config = { ...defaultPrettierConfig, ...config }
   config.filepath = '(stdin)'
-  config.parser = prettierLanguages[document.languageId]
+  config.parser = prettierLanguages[languageId]
   return config
-}
-
-function prettierFormat (text, document, { prettier }) {
-  const prettierConfig = getPrettierConfig(document, prettier)
-  return prettier.format(text, prettierConfig)
 }
 
 // -- ESLint --------------------------------------------------------------- -//
@@ -130,11 +132,6 @@ const eslintConfig = {
   rules: { 'space-before-function-paren': ['error', 'always'] }
 }
 
-function eslintFormat (text, document, { linter }) {
-  if (!eslintLanguages.includes(document.languageId)) return text
-  return linter.verifyAndFix(text, eslintConfig).output
-}
-
 // -- Helpers --------------------------------------------------------------- //
 
 function fullDocumentRange (document) {
@@ -146,6 +143,13 @@ function getFilePath (document) {
   if (!document.isUntitled) return document.fileName
   const [space] = workspace.workspaceFolders ?? []
   if (space?.uri?.scheme === 'file') return space.uri.fsPath
+}
+
+function findUp (directory, file, prev) {
+  if (directory === prev) return
+  const candidate = path.join(directory, file)
+  if (fs.existsSync(candidate)) return candidate
+  return findUp(path.join(directory, '..'), file, directory)
 }
 
 async function loadModule (name, builtin, check) {
