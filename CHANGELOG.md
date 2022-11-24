@@ -3,6 +3,7 @@
 ## unreleased
 
 - fixed bug preventing formatting of tailwindcss files
+- run vue files through eslint
 
 ## [1.0.0]
 

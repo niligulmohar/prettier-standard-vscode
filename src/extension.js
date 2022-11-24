@@ -28,6 +28,7 @@ exports.activate = async function (context) {
   })
   ctx.linter = new eslint.Linter()
   ctx.linter.defineParser('typescript', require('@typescript-eslint/parser'))
+  ctx.linter.defineParser('vue', require('vue-eslint-parser'))
 
   const langs = Object.keys(prettierLanguages).flatMap(language => [
     { scheme: 'file', language },
@@ -62,8 +63,8 @@ async function format ({ prettier, linter }, document, range) {
     let text = range ? document.getText(range) : document.getText()
     const prettierConfig = getPrettierConfig(prettier, filePath, document)
     text = prettier.format(text, prettierConfig)
-    if (eslintLanguages.includes(document.languageId)) {
-      text = linter.verifyAndFix(text, eslintConfig).output
+    if (Object.keys(eslintLanguages).includes(document.languageId)) {
+      text = linter.verifyAndFix(text, eslintConfig(document)).output
     }
     return [TextEdit.replace(range || fullDocumentRange(document), text)]
   } catch (error) {
@@ -127,16 +128,17 @@ function getPrettierConfig (prettier, filePath, { languageId }) {
 
 // -- ESLint --------------------------------------------------------------- -//
 
-const eslintLanguages = [
-  'javascript',
-  'javascriptreact',
-  'typescript',
-  'typescriptreact'
-]
+const eslintLanguages = {
+  javascript: 'typescript',
+  javascriptreact: 'typescript',
+  typescript: 'typescript',
+  typescriptreact: 'typescript',
+  vue: 'vue'
+}
 
 // TODO:: allow loading config from host project
-const eslintConfig = {
-  parser: 'typescript',
+const eslintConfig = ({ languageId }) => ({
+  parser: eslintLanguages[languageId],
   parserOptions: {
     ecmaVersion: 2022,
     ecmaFeatures: { jsx: true },
@@ -145,7 +147,7 @@ const eslintConfig = {
   env: { es2021: true, node: true },
   globals: { document: 'readonly', navigator: 'readonly', window: 'readonly' },
   rules: { 'space-before-function-paren': ['error', 'always'] }
-}
+})
 
 // -- Helpers --------------------------------------------------------------- //
 
