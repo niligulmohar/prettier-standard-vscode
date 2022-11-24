@@ -2,7 +2,7 @@
   "name": "prettier-standard-vscode",
   "displayName": "Prettier-Standard - JavaScript formatter",
   "description": "VS Code plugin for prettier + standard",
-  "version": "0.9.2",
+  "version": "1.0.0",
   "publisher": "numso",
   "author": "Dallin Osmun <@dallinosmun>",
   "galleryBanner": {
@@ -51,8 +51,8 @@
   "main": "./out/main",
   "scripts": {
     "esbuild:base": "esbuild ./src/extension.js --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
-    "build": "rm -rf ./out && yarn esbuild:base -- --minify && vsce package",
-    "dev": "yarn esbuild:base -- --sourcemap --watch"
+    "build": "rm -rf ./out && yarn esbuild:base --minify && vsce package",
+    "dev": "yarn esbuild:base --sourcemap --watch"
   },
   "devDependencies": {
     "@types/vscode": "^1.73.1",
