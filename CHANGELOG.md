@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased
+## [1.0.1]
 
 - fixed bug preventing formatting of tailwindcss files
 - run vue files through eslint
