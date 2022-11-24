@@ -1,15 +1,23 @@
 # Changelog
 
+## unreleased
+
+- fixed bug preventing formatting of tailwindcss files
+
 ## [1.0.0]
+
 - Replaced prettier-standard with prettier and eslint. We will load in and honor your prettier version/config/plugins/ignorelist if they exist. One day we hope to do the same for eslint. For now we we just apply the `space-before-function-paren` rule and run it through --fix. I couldn't think of what else standard changes from base prettier so please file an issue if you find a missing rule.
 
 ## [0.9.2]
+
 - I am bad at publishing versions. Many apologies. Trying again
 
 ## [0.9.1]
+
 - Revert 0.9.0. Worked great in debug mode but got a weird error when running packaged. IT WILL BE BACK!
 
 ## [0.9.0]
+
 - Update to a forked version of prettier-standard with updated dependencies
 
 ## [0.8.1]

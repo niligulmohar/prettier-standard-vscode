@@ -105,7 +105,7 @@ const prettierLanguages = {
   ansible: 'yaml',
   'home-assistant': 'yaml'
 }
-prettierLanguages.tailwindcss = 'tailwindcss'
+prettierLanguages.tailwindcss = 'css'
 
 const defaultPrettierConfig = {
   semi: false,
