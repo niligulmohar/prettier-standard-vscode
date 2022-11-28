@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.2]
+
+- Stop loading in eslint from the local project when available. We aren't using any local config yet anyway so there's no point in loading in the custom eslint version. And it's causing some issues. Fixes #58
+
 ## [1.0.1]
 
 - fixed bug preventing formatting of tailwindcss files
