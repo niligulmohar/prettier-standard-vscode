@@ -21,11 +21,12 @@ exports.activate = async function (context) {
       return 'missing prettier.resolveConfig(filePath, opts)'
     }
   })
-  const eslint = await loadModule('eslint', require('eslint'), ctx => {
-    if (!require(ctx.uri.fsPath).version?.startsWith('8.')) {
-      return 'we only support major version 8'
-    }
-  })
+  const eslint = require('eslint')
+  // const eslint = await loadModule('eslint', require('eslint'), ctx => {
+  //   if (!require(ctx.uri.fsPath).version?.startsWith('8.')) {
+  //     return 'we only support major version 8'
+  //   }
+  // })
   ctx.linter = new eslint.Linter()
   ctx.linter.defineParser('typescript', require('@typescript-eslint/parser'))
   ctx.linter.defineParser('vue', require('vue-eslint-parser'))
