@@ -18,9 +18,6 @@
   "bugs": {
     "url": "https://github.com/numso/prettier-standard-vscode/issues"
   },
-  "engines": {
-    "vscode": "^1.73.1"
-  },
   "categories": [
     "Formatters"
   ],
@@ -49,22 +46,12 @@
     "onLanguage:tailwindcss"
   ],
   "main": "./out/main",
-  "scripts": {
-    "postinstall": "yarn patch:eslint",
-    "patch:eslint": "sed -i.bak 's/require.resolve(\"espree\")/\"\"/' node_modules/eslint/lib/rule-tester/rule-tester.js",
-    "esbuild:base": "esbuild ./src/extension.js --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
-    "build": "rm -rf ./out && yarn esbuild:base --minify && vsce package",
-    "dev": "yarn esbuild:base --sourcemap --watch"
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.73.1",
-    "esbuild": "0.15.14"
-  },
   "dependencies": {
     "@typescript-eslint/parser": "5.43.0",
     "eslint": "8.28.0",
     "prettier": "2.7.1",
     "typescript": "4.9.3",
     "vue-eslint-parser": "9.1.0"
-  }
+  },
+  "bin": "./src/prettier-standard-vscode.js"
 }
